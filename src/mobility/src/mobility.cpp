@@ -67,12 +67,7 @@ public:
 
     bool isRoverClose(Rover otherRover, float distance) {
         // compute distance between two points
-        // formula is sqrt((x1-x2)^2 + (y1-y2)^2)
-        //
-        // fastest method for computing distance is...
-        // - to avoid local variables (use inline functions)
-        // - to avoid doing a square root (using distance squared)
-        // - to avoid using other libraries (like pow())
+          
         return (X() - otherRover.X() * X() - otherRover.X()) +
                (Y() - otherRover.Y() * Y() - otherRover.Y())
                <= (distance * distance);
@@ -110,10 +105,6 @@ public:
     inline void updateRover(string name, float x, float y, float theta) { addRover(name, x, y, theta); }
 
     float calculateAverageBearing() {
-        // NOTE: this function works almost always, except the case where
-        //       all rover thetas cancel each other out.
-        //       We are ignoring this case for simplicity sake and it
-        //       should rarely (if ever) happen.
         int roverCount = theRovers.size();
         switch(roverCount) {
             case 0:
@@ -132,7 +123,6 @@ public:
     }
 
     float calculateAverageNeighborBearing(float x, float y) {
-        // make a fake rover from x and y
         Rover centerPoint("centerPoint", x, y, 0.0);
 
         int roverCount = 0;
