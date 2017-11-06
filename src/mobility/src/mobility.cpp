@@ -182,8 +182,8 @@ void mobilityStateMachine(const ros::TimerEvent &)
                 state_machine_msg.data = "TRANSLATING";//, " + converter.str();
                 float angular_velocity = angular;
                 float linear_velocity = 0;
-                //angular=KPL*(global_local_heading-current_location.theta);
-                angular=KPG*(global_av_heading-current_location.theta);
+                angular=KPL*(global_local_heading-current_location.theta);
+                //angular=KPG*(global_av_heading-current_location.theta);
                 setVelocity(linear_velocity, angular_velocity);
                 break;
             }
