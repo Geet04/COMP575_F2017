@@ -31,8 +31,8 @@
 #include <math.h>
 #include <vector>
 
-#define KPL 1.5
-#define KPG 2.5
+#define KP 0.5
+//#define KPG 2.5
 using namespace std;
 
 // Random number generator
@@ -53,6 +53,9 @@ float angular=0;
 float global_local_heading = 0;
 float global_av_heading = 0;
 pose current_location;
+float direction_theta=0;
+float average_x=0.0;
+float average_y=0.0;
 
 int transitions_to_auto = 0;
 double time_stamp_transition_to_auto = 0.0;
@@ -180,9 +183,9 @@ void mobilityStateMachine(const ros::TimerEvent &)
             case STATE_MACHINE_TRANSLATE:
             {
                 state_machine_msg.data = "TRANSLATING";//, " + converter.str();
-                float angular_velocity = angular;
-                float linear_velocity = 0;
-                angular=KPL*(global_local_heading-current_location.theta);
+                float angular_velocity = KP * (direction_theta-current_location.theta );
+                float linear_velocity = 0.05;
+                //angular=KPL*(global_local_heading-current_location.theta);
                 //angular=KPG*(global_av_heading-current_location.theta);
                 setVelocity(linear_velocity, angular_velocity);
                 break;
@@ -385,6 +388,12 @@ void parse_pose_message(string msg){
         all_rovers[1] = incoming_pose;
     } else if (incoming_rover_name.compare("achilles") == 0){
         all_rovers[2] = incoming_pose;
+    } else if (rover_name.compare("diomedes") == 0){
+       all_rovers[3] = incoming_pose;
+    }else if (rover_name.compare("hector") == 0){
+       all_rovers[4] = incoming_pose;
+    }else if (rover_name.compare("paris") == 0){
+        all_rovers[5] = incoming_pose;
     } else {
         cout << "We missed something.";
     }
@@ -395,12 +404,12 @@ float calculate_global_average_heading(){
     float u_y=0;
     float global_average_heading;
     global_av_heading= global_average_heading;
-    for (int i = 0; i<3; i++){
+    for (int i = 0; i<6; i++){
         u_x += cos(all_rovers[i].theta);
         u_y += sin(all_rovers[i].theta);
     }
-    global_average_heading = atan2(u_y,u_x);
-    return global_average_heading;
+    global_av_heading = atan2(u_y,u_x);
+    return global_av_heading;
 }
 
 void calculate_neighbors(string rover_name){
@@ -415,19 +424,34 @@ void calculate_neighbors(string rover_name){
     } else if (rover_name.compare("achilles") == 0){
         my_pose = all_rovers[2];
         my_index = 2;
-    } else {
+    } else if (rover_name.compare("diomedes") == 0){
+        my_pose = all_rovers[3];
+        my_index = 3;
+    }else if (rover_name.compare("hector") == 0){
+        my_pose = all_rovers[4];
+        my_index = 4;
+    }else if (rover_name.compare("paris") == 0){
+        my_pose = all_rovers[5];
+        my_index = 5;
+    }
+    else {
         my_pose = all_rovers[0];
 //        cout << "We missed something.";
     }
     neighbors.clear();
-    for (int i = 0; i<3; i++){
+    for (int i = 0; i<6; i++){
         if(i != my_index){
             if(hypot(my_pose.x-all_rovers[i].x, my_pose.y-all_rovers[i].y)<2){
                 neighbors.push_back(all_rovers[i]);
+                average_x += my_pose.x-all_rovers[i].x;
+                average_y += my_pose.y-all_rovers[i].y;
             }
+
         }
     }
+    direction_theta= atan2(average_y,average_x);
 }
+
 
 float calculate_local_average_heading(){
     float u_x=0;
