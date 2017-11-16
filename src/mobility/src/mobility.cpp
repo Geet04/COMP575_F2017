@@ -414,7 +414,7 @@ float calculate_global_average_heading(){
 
 void calculate_neighbors(string rover_name){
     pose my_pose;
-    int my_index;
+    int my_index=0;
     if(rover_name.compare("ajax") == 0){
         my_pose = all_rovers[0];
         my_index = 0;
@@ -443,8 +443,8 @@ void calculate_neighbors(string rover_name){
         if(i != my_index){
             if(hypot(my_pose.x-all_rovers[i].x, my_pose.y-all_rovers[i].y)<2){
                 neighbors.push_back(all_rovers[i]);
-                average_x += my_pose.x + 1/ my_index* (all_rovers[i].x-my_pose.x);
-                average_y += my_pose.y + 1/ my_index* (all_rovers[i].y-my_pose.y);
+                average_x += my_pose.x + 1/ neighbors.size() * (my_pose.x-all_rovers[i].x);
+                average_y += my_pose.y + 1/ neighbors.size() * (my_pose.y-all_rovers[i].y);
             }
 
         }
