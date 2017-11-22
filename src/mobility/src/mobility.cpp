@@ -31,8 +31,8 @@
 #include <math.h>
 #include <vector>
 
-#define KPL 1.5
-#define KPG 2.5
+#define KPL 1.0
+#define KPG 1.0
 using namespace std;
 
 // Random number generator
@@ -403,21 +403,31 @@ float calculate_global_average_heading(){
     return global_av_heading;
 }
 
-void calculate_neighbors(string rover_name){
-    pose my_pose;
-    int my_index;
-    if(rover_name.compare("ajax") == 0){
-        my_pose = all_rovers[0];
-        my_index = 0;
-    } else if (rover_name.compare("aeneas") == 0){
-        my_pose = all_rovers[1];
-        my_index = 1;
-    } else if (rover_name.compare("achilles") == 0){
-        my_pose = all_rovers[2];
-        my_index = 2;
-    } else {
-        my_pose = all_rovers[0];
-//        cout << "We missed something.";
+    void calculate_neighbors(string rover_name){
+        pose my_pose;
+        int my_index=0;
+        if(rover_name.compare("ajax") == 0){
+            my_pose = all_rovers[0];
+            my_index = 0;
+        } else if (rover_name.compare("aeneas") == 0){
+            my_pose = all_rovers[1];
+            my_index = 1;
+        } else if (rover_name.compare("achilles") == 0){
+            my_pose = all_rovers[2];
+            my_index = 2;
+        } else if (rover_name.compare("diomedes") == 0){
+            my_pose = all_rovers[3];
+            my_index = 3;
+        }else if (rover_name.compare("hector") == 0){
+            my_pose = all_rovers[4];
+            my_index = 4;
+        }else if (rover_name.compare("paris") == 0){
+            my_pose = all_rovers[5];
+            my_index = 5;
+        }
+        else {
+            my_pose = all_rovers[0];
+    //        cout << "We missed something.";
     }
     neighbors.clear();
     for (int i = 0; i<3; i++){
