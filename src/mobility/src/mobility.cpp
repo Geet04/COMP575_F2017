@@ -63,6 +63,10 @@ pose current_location;
 float direction_theta=0;
 float average_x=0.0;
 float average_y=0.0;
+int i=0;
+int n_count = 0;
+
+float new_local_position;
 
 int transitions_to_auto = 0;
 double time_stamp_transition_to_auto = 0.0;
@@ -452,7 +456,8 @@ float calculate_global_average_heading(){
 void calculate_neighbors(string rover_name){
     pose my_pose;
     int my_index=0;
-    int my_index;
+    float u_x=0;
+    float u_y=0;
     if(rover_name.compare("ajax") == 0){
         my_pose = all_rovers[0];
         my_index = 0;
@@ -480,14 +485,19 @@ void calculate_neighbors(string rover_name){
     for (int i = 0; i<6; i++){
         for (int i = 0; i<3; i++){
         if(i != my_index){
-            if(hypot(my_pose.x-all_rovers[i].x, my_pose.y-all_rovers[i].y)<2){
+            if(hypot(my_pose.x - all_rovers[i].x, my_pose.y - all_rovers[i].y)<10){
                 neighbors.push_back(all_rovers[i]);
                 average_x += my_pose.x + 1/ neighbors.size() * (my_pose.x-all_rovers[i].x);
                 average_y += my_pose.y + 1/ neighbors.size() * (my_pose.y-all_rovers[i].y);
+                n_count++;
             }
 
         }
+
+        average_x = current_location.x + u_x/(n_count -1);
+        average_y = current_location.y + u_y/(n_count -1);
     }
+
     direction_theta= atan2(average_y,average_x);
 }
 
